@@ -1,0 +1,10 @@
+pandas
+numpy
+statsmodels
+pyyaml
+google-genai
+pydantic
+mcp
+fastapi
+uvicorn
+python-multipart

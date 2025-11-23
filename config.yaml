@@ -1,0 +1,32 @@
+# Policy and Guardrails Configuration
+
+priorities:
+  revenue_weight: 0.4
+  margin_weight: 0.3
+  service_weight: 0.2
+  inventory_weight: 0.1
+
+constraints:
+  max_plan_change_per_week: 0.20  # 20%
+  max_promo_uplift: 0.50          # 50%
+  capacity_limit_total: 5000     # Dummy capacity limit for negotiation
+
+strategic_skus:
+  - "SKU_001"
+  - "SKU_005"
+
+strategic_channels:
+  - "E-commerce"
+
+segments:
+  stable_seasonal:
+    allowed_uplift: 0.3
+  promo_sensitive:
+    allowed_uplift: 0.6
+  new_product:
+    allowed_uplift: 1.0
+
+model_config:
+  model_name: "gemini-2.5-flash-lite"
+  temperature: 0.2
+  max_output_tokens: 2048

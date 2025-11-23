@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Demand Planning</title>
+    <link rel="stylesheet" href="/ui/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar / Chat -->
+        <div class="sidebar">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Agent Chat</h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button onclick="runPlanningCycle()" class="action-btn"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem; background-color: #f59e0b;">🚀 Run
+                        Plan</button>
+                    <button onclick="requestChart()" class="action-btn"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">📊 Chart</button>
+                </div>
+            </div>
+            <div class="chat-history" id="chatHistory">
+                <div class="message system">
+                    Welcome! I am your Demand Planning Assistant. Ask me anything or ask for a chart.
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            <div class="agent-actions">
+                <button onclick="loadHistory()" class="action-btn"
+                    style="background-color: #64748b; margin-top: 0.5rem;">📜 Load History</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header">
+                <h1>Demand Planning Dashboard</h1>
+                <div class="controls">
+                    <button onclick="toggleView('table')" class="active" id="btnTable">Table View</button>
+                    <button onclick="toggleView('chart')" id="btnChart">Chart Overlay</button>
+                </div>
+            </div>
+
+            <!-- KPI Cards / Top Charts -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Historical Sales</h3>
+                    <canvas id="chartHistory"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Forecast (12 Weeks)</h3>
+                    <canvas id="chartForecast"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Top 5 Products</h3>
+                    <canvas id="chartTop5"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Table or Dynamic Chart -->
+            <div class="content-area">
+                <!-- Table View -->
+                <div id="tableView" class="view-section active">
+                    <div class="filters">
+                        <input type="text" id="skuFilter" placeholder="Filter SKU..." onkeyup="filterTable()">
+                        <select id="bucketFilter" onchange="updateTableBucket()">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="demandTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>SKU</th>
+                                    <th>Baseline</th>
+                                    <th>Plan</th>
+                                    <th>Constrained Plan</th>
+                                    <th>Upside</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Chart Overlay View -->
+                <div id="chartView" class="view-section">
+                    <div class="chart-container-large">
+                        <canvas id="dynamicChart"></canvas>
+                    </div>
+                    <div class="chart-status" id="chartStatus">
+                        Ask the agent to generate a chart...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/ui/app.js?v=3"></script>
+</body>
+
+</html>
