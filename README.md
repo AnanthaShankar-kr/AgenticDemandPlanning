@@ -57,27 +57,6 @@ All of these are coordinated by an **Orchestrator**, which runs the planning cyc
 
 ---
 
-### MCP in the Loop – Policy via Tools, Not Files
-
-We also **implemented MCP (Model Context Protocol)** to fetch policy via a tool, rather than letting agents read files directly:
-
-- **Config Server (`servers/config_server.py`)**  
-  - Runs as an MCP tool provider.  
-  - Reads `config.yaml` from disk.  
-  - Exposes a tool `get_policy_config`.
-
-- **Policy Agent (`agents/policy_agent.py`)**  
-  - Does *not* open the YAML file.  
-  - When it needs a rule (e.g., max promo uplift), it calls the MCP tool:  
-    `get_policy_config(key="constraints")`.  
-  - Receives just the relevant slice of policy and applies it.
-
-- **Why this matters**  
-  - The Agent’s “brain” is decoupled from the configuration source.  
-  - In a real company, the server could point to a secure DB or internal API with zero changes to the Policy Agent logic.
-
----
-
 ### ✅ Implemented Concepts
 
 **I. Core Agent Architecture**
