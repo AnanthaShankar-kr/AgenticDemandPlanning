@@ -74,6 +74,7 @@ flowchart LR
     Monitor --> Orchestrator
     Neg --> Orchestrator
 
+```
 ---
 
 ### ✅ Implemented Concepts
@@ -155,6 +156,28 @@ flowchart LR
     The planning cycle is an assembly line:  
     **Data → Segmentation → Baseline → Scenario → Negotiation → Monitor**.
 
+```mermaid
+flowchart LR
+    Policy[PolicyAndGuardrailAgent] --> ConfigServer[Config Server MCP]
+    ConfigServer --> ConfigFile[config.yaml]
+
+    Data[DataAndSignalAgent] --> DataFiles[CSV Data files]
+    Base[BaselineForecastAgent] --> DataFiles
+    Scenario[EventAndScenarioAgent] --> DataFiles
+    Neg[MicroNegotiationAgent] --> DataFiles
+
+    Monitor[MonitorExplainLearnAgent] --> Memory[memory_store.json]
+
+    Analyst[AnalystAgent] --> Sandbox[Docker Sandbox]
+    Sandbox --> DataFiles
+
+    Orchestrator[OrchestratorAgent] --> Gemini[Gemini LLM]
+    Analyst --> Gemini
+    Policy --> Gemini
+    Scenario --> Gemini
+    Neg --> Gemini
+    Monitor --> Gemini
+```
 ---
 
 **VII. Observability & Monitoring**
@@ -201,6 +224,7 @@ flowchart LR
     Results --> ReportMD[eval_report.md]
     Results --> ReportJSON[eval_report.json]
     Results --> Suggestions[refinement_suggestions.md]
+```
 ---
 
 **IX. Security & Configuration**
