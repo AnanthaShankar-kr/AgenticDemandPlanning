@@ -5,9 +5,13 @@ from google.genai import types
 import yaml
 import inspect
 from utils.memory_store import MemoryStore
+from dotenv import load_dotenv
 
 class BaseAgent:
     def __init__(self, name: str, config_path: str = "config.yaml"):
+        # Load environment variables from .env file
+        load_dotenv()
+        
         self.name = name
         self.config_path = config_path
         self.config = self._load_config()

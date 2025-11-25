@@ -1,0 +1,130 @@
+meta:
+  agent: "AnalystAgent"
+  description: "Evaluation suite for AnalystAgent's ability to explain plans, query data, and handle policy questions."
+  version: "1.0"
+
+tests:
+  - id: "explain_cut_sku_002"
+    description: "Verify agent can explain why SKU_002 was reduced (capacity constraints)."
+    user_input: "Why was the plan for SKU_002 reduced?"
+    context:
+      sku_id: "SKU_002"
+    expectations:
+      type: "explanation"
+      must_mention:
+        - "capacity"
+        - "constraint"
+        - "cut"
+        - "limit"
+      should_mention:
+        - "negotiation"
+        - "10000"
+      use_ground_truth: true
+      require_code_execution: true
+      importance: "high"
+
+  - id: "show_sales_history_sku_001"
+    description: "Verify agent can retrieve historical sales data for a specific SKU."
+    user_input: "Show me the sales history for SKU_001."
+    context:
+      sku_id: "SKU_001"
+    expectations:
+      type: "data_summary"
+      must_mention:
+        - "SKU_001"
+        - "sales"
+        - "history"
+      should_mention:
+        - "trend"
+        - "volume"
+      use_ground_truth: true
+      require_code_execution: true
+      importance: "medium"
+
+  - id: "compare_baseline_vs_final_sku_001"
+    description: "Verify agent can compare the baseline forecast against the final constrained plan."
+    user_input: "How does the final plan compare to the baseline for SKU_001?"
+    context:
+      sku_id: "SKU_001"
+    expectations:
+      type: "comparison"
+      must_mention:
+        - "baseline"
+        - "final plan"
+        - "constrained"
+        - "difference"
+      should_mention:
+        - "higher"
+        - "lower"
+      use_ground_truth: true
+      require_code_execution: true
+      importance: "high"
+
+  - id: "explain_segment_sku_005"
+    description: "Verify agent can identify and explain the segmentation of a SKU."
+    user_input: "What segment is SKU_005 in and why?"
+    context:
+      sku_id: "SKU_005"
+    expectations:
+      type: "explanation"
+      must_mention:
+        - "segment"
+        - "volatility"
+        - "pattern"
+      should_mention:
+        - "high"
+        - "low"
+        - "smooth"
+        - "erratic"
+      use_ground_truth: true
+      require_code_execution: true
+      importance: "medium"
+
+  - id: "explain_policy_promo_uplift"
+    description: "Verify agent can explain the max promo uplift policy."
+    user_input: "What is the maximum allowed promo uplift?"
+    expectations:
+      type: "policy_explanation"
+      must_mention:
+        - "50%"
+        - "0.5"
+        - "uplift"
+        - "promo"
+      should_mention:
+        - "guardrail"
+        - "constraint"
+      use_ground_truth: true
+      require_code_execution: false
+      importance: "high"
+
+  - id: "handle_unknown_sku"
+    description: "Verify agent handles queries for non-existent SKUs gracefully."
+    user_input: "Show me the forecast for SKU_999."
+    expectations:
+      type: "unknown_handling"
+      must_mention:
+        - "not found"
+        - "does not exist"
+        - "no data"
+      must_not_mention:
+        - "forecast is"
+        - "sales are"
+      use_ground_truth: false
+      require_code_execution: true
+      importance: "medium"
+
+  - id: "list_top_cuts"
+    description: "Verify agent can list the SKUs with the largest reductions."
+    user_input: "Which SKUs had the biggest cuts due to capacity?"
+    expectations:
+      type: "data_summary"
+      must_mention:
+        - "SKU_002"
+        - "SKU_003"
+        - "SKU_004"
+      should_mention:
+        - "reduction"
+        - "volume"
+      use_ground_truth: true
+      require_code_execution: true
+      importance: "high"

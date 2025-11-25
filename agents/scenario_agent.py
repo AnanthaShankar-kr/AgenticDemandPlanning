@@ -73,11 +73,37 @@ class EventAndScenarioAgent(BaseAgent):
         super().run(prompt)
         
         # Fallback for PoC: Check if Plan is identical to Baseline (no events applied)
-        # Note: floating point comparison might be tricky, but let's check if Upside is still Baseline_P90 exactly
         if self.scenarios['Plan'].equals(self.scenarios['Baseline_P50']):
-             print(f"[{self.name}] FALLBACK: Manually applying events.")
-             self.apply_event_uplift('SKU_001', 4, 0.3)
-             self.apply_event_uplift('SKU_005', 1, 0.5)
+             print(f"[{self.name}] FALLBACK: Manually applying events from context.")
+             events = self.policy_context.get('events', [])
+             if not events:
+                 # Default hardcoded if no context events
+                 self.apply_event_uplift('SKU_001', 4, 0.3)
+                 self.apply_event_uplift('SKU_005', 1, 0.5)
+             else:
+                 # Apply events from context
+                 # We need to calculate week_offset. 
+                 # Assuming scenarios is sorted by Date and we can find the index.
+                 # But apply_event_uplift takes week_offset.
+                 # Let's try to find the date match.
+                 for event in events:
+                     sku = event['SKU']
+                     uplift = event['Uplift']
+                     date_str = event['Date']
+                     try:
+                         event_date = pd.to_datetime(date_str)
+                         # Find offset for this SKU
+                         sku_data = self.scenarios[self.scenarios['SKU'] == sku]
+                         if not sku_data.empty:
+                             # Assuming sorted
+                             start_date = sku_data['Date'].min()
+                             # Calculate offset in weeks
+                             days_diff = (event_date - start_date).days
+                             offset = int(days_diff / 7)
+                             if offset >= 0:
+                                 self.apply_event_uplift(sku, offset, uplift)
+                     except Exception as e:
+                         print(f"Error applying fallback event: {e}")
              
         return self.scenarios
 

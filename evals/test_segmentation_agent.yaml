@@ -1,0 +1,43 @@
+meta:
+  agent: "SegmentationAndPlaybookAgent"
+  description: "Tests for segmentation logic and explanation."
+  version: "1.0"
+
+tests:
+  - id: "segment_volatile_sku"
+    description: "High variance series should be 'promo_sensitive'."
+    input_data:
+      - {SKU: "SKU_VOL", Sales_Cleaned: 10}
+      - {SKU: "SKU_VOL", Sales_Cleaned: 1000}
+      - {SKU: "SKU_VOL", Sales_Cleaned: 50}
+    assertions:
+      - check: "segment_assignment"
+        sku: "SKU_VOL"
+        expected_segments: ["promo_sensitive"]
+    judge: "deterministic"
+
+  - id: "segment_stable_sku"
+    description: "Low variance series should be 'stable_seasonal'."
+    input_data:
+      - {SKU: "SKU_STABLE", Sales_Cleaned: 100}
+      - {SKU: "SKU_STABLE", Sales_Cleaned: 105}
+      - {SKU: "SKU_STABLE", Sales_Cleaned: 95}
+    assertions:
+      - check: "segment_assignment"
+        sku: "SKU_STABLE"
+        expected_segments: ["stable_seasonal"]
+    judge: "deterministic"
+
+  - id: "explain_segment_assignment"
+    description: "Agent explains why a SKU is in a specific segment."
+    user_input: "Why is SKU_VOL in the promo_sensitive segment?"
+    context:
+      sku: "SKU_VOL"
+      segment: "promo_sensitive"
+    expectations:
+      type: "explanation"
+      must_mention: ["volatility"]
+      should_mention: ["variance", "fluctuation"]
+      use_ground_truth: true
+      require_code_execution: false
+      judge: "llm"

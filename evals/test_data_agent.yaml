@@ -1,0 +1,28 @@
+meta:
+  agent: "DataAndSignalAgent"
+  description: "Deterministic tests for data cleaning and outlier handling."
+  version: "1.0"
+
+tests:
+  - id: "handle_outliers"
+    description: "Ensure outliers are capped or flagged."
+    input_data:
+      - {SKU: "SKU_TEST", Sales: 100}
+      - {SKU: "SKU_TEST", Sales: 100}
+      - {SKU: "SKU_TEST", Sales: 10000}
+    assertions:
+      - check: "max_value_capped"
+        column: "Sales"
+        max_allowed_std_devs: 3
+    judge: "deterministic"
+
+  - id: "fill_missing_values"
+    description: "Ensure missing sales values are filled."
+    input_data:
+      - {SKU: "SKU_TEST", Sales: 100}
+      - {SKU: "SKU_TEST", Sales: null}
+      - {SKU: "SKU_TEST", Sales: 100}
+    assertions:
+      - check: "no_nulls"
+        column: "Sales"
+    judge: "deterministic"

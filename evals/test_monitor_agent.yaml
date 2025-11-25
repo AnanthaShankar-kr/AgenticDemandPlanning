@@ -1,0 +1,26 @@
+meta:
+  agent: "MonitorExplainLearnAgent"
+  description: "Tests for monitoring and reporting."
+  version: "1.0"
+
+tests:
+  - id: "compute_metrics"
+    description: "Ensure basic metrics are computed."
+    input_data:
+      - {SKU: "SKU_A", Plan: 100, Constrained_Plan: 90, Negotiation_Log: ""}
+      - {SKU: "SKU_B", Plan: 200, Constrained_Plan: 200, Negotiation_Log: ""}
+    assertions:
+      - check: "metric_exists"
+        metric: "total_volume"
+    judge: "deterministic"
+
+  - id: "summarize_performance"
+    description: "Summarize plan performance."
+    user_input: "Give me a brief summary of where our plan is doing well."
+    expectations:
+      type: "summary"
+      must_mention: ["performance"]
+      should_mention: ["volume", "cuts"]
+      use_ground_truth: true
+      require_code_execution: false
+      judge: "llm"

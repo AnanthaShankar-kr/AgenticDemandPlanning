@@ -1,0 +1,11 @@
+SKU,Segment
+SKU_001,"{'segment': 'stable_seasonal', 'is_strategic': True, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_002,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_003,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_004,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_005,"{'segment': 'promo_sensitive', 'is_strategic': True, 'model_family': 'Regression', 'features': ['Promo_Flag', 'Season']}"
+SKU_006,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_007,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_008,"{'segment': 'promo_sensitive', 'is_strategic': False, 'model_family': 'Regression', 'features': ['Promo_Flag', 'Season']}"
+SKU_009,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"
+SKU_010,"{'segment': 'stable_seasonal', 'is_strategic': False, 'model_family': 'ETS', 'features': ['Season']}"

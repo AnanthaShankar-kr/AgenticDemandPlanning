@@ -96,6 +96,14 @@ class OrchestratorAgent:
         if res:
             playbooks, metrics = res
             log(f"[Orchestrator] Segmentation Complete.")
+            
+            # Save segmentation to disk for AnalystAgent
+            try:
+                # playbooks is dict {sku: segment}
+                seg_df = pd.DataFrame(list(playbooks.items()), columns=['SKU', 'Segment'])
+                seg_df.to_csv("data/segmentation.csv", index=False)
+            except Exception as e:
+                log(f"[Orchestrator] Error saving segmentation: {e}")
         else:
             playbooks, metrics = {}, {}
         

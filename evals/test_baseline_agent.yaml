@@ -1,0 +1,16 @@
+meta:
+  agent: "BaselineForecastAgent"
+  description: "Sanity checks for baseline forecasts."
+  version: "1.0"
+
+tests:
+  - id: "forecast_sanity_check"
+    description: "Forecasts must be positive and exist for all SKUs."
+    input_data:
+      - {SKU: "SKU_A", Sales_Cleaned: 100, Date: "2024-01-01"}
+    assertions:
+      - check: "no_negative_values"
+        column: "Baseline_P50"
+      - check: "horizon_length"
+        weeks: 12
+    judge: "deterministic"

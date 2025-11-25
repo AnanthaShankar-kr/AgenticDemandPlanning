@@ -1,0 +1,29 @@
+meta:
+  agent: "EventAndScenarioAgent"
+  description: "Tests for event application and scenario generation."
+  version: "1.0"
+
+tests:
+  - id: "apply_promo_uplift"
+    description: "Plan should reflect promo uplift relative to baseline."
+    input_data:
+      - {SKU: "SKU_PROMO", Baseline_P50: 100, Baseline_P90: 110, Baseline_P10: 90, Date: "2024-01-01"}
+    context:
+      events: [{SKU: "SKU_PROMO", Date: "2024-01-01", Uplift: 0.2}]
+    assertions:
+      - check: "value_equals"
+        column: "Plan"
+        expected_value: 120
+        tolerance: 0.1
+    judge: "deterministic"
+
+  - id: "explain_scenario_diff"
+    description: "Explain the difference between baseline and plan during a promo."
+    user_input: "What is the difference between baseline and plan for SKU_PROMO?"
+    expectations:
+      type: "explanation"
+      must_mention: ["promo", "uplift"]
+      should_mention: ["increase", "20%"]
+      use_ground_truth: true
+      require_code_execution: false
+      judge: "llm"

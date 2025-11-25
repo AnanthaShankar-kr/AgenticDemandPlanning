@@ -1,0 +1,28 @@
+meta:
+  agent: "MicroNegotiationAgent"
+  description: "Tests for capacity constraints and priority logic."
+  version: "1.0"
+
+tests:
+  - id: "respect_capacity_limit"
+    description: "Total constrained plan must not exceed capacity."
+    input_data:
+      - {SKU: "SKU_A", Plan: 3000}
+      - {SKU: "SKU_B", Plan: 3000}
+    context:
+      capacity_limit: 5000
+    assertions:
+      - check: "sum_less_than_or_equal"
+        column: "Constrained_Plan"
+        limit: 5000
+    judge: "deterministic"
+
+  - id: "explain_cuts"
+    description: "Explain why cuts were made."
+    user_input: "Why was SKU_B cut?"
+    expectations:
+      type: "explanation"
+      must_mention: ["capacity", "limit", "priority", "cut"]
+      use_ground_truth: true
+      require_code_execution: false
+      judge: "llm"

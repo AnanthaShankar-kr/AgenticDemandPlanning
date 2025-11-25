@@ -2,4 +2,5 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
+.env
 sandbox/temp_query.py

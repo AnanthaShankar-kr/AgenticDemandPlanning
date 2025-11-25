@@ -95,13 +95,37 @@ class MicroNegotiationAgent(BaseAgent):
         
         # Fallback for PoC
         if (self.constrained_plan['Negotiation_Log'] == "").all():
-             print(f"[{self.name}] FALLBACK: Manually checking capacity.")
-             # We just run the check, if no cuts needed, that's fine.
-             # But let's force a check to be sure.
-             self.check_all_weeks()
-             # If we needed to cut, we would have to call cut_allocation logic here or inside check_all_weeks
-             # For now, assuming check_all_weeks just reports. 
-             # Let's leave it as is, if no cuts were made by LLM, maybe none were needed.
+             print(f"[{self.name}] FALLBACK: Manually checking and cutting capacity violations.")
+             capacity_limit = self.policy_context.get('constraints', {}).get('capacity_limit_total', 10000)
+             strategic_skus = self.policy_context.get('strategic_skus', [])
+             
+             # Check each week and cut if needed
+             for date, group in self.constrained_plan.groupby('Date'):
+                 total_demand = group['Constrained_Plan'].sum()
+                 if total_demand > capacity_limit:
+                     shortage = total_demand - capacity_limit
+                     print(f"[{self.name}] Week {date.date()}: Demand {total_demand:.0f} > Cap {capacity_limit}. Cutting {shortage:.0f} units.")
+                     
+                     # Sort SKUs by priority (non-strategic first, then by volume)
+                     week_data = group.copy()
+                     week_data['is_strategic'] = week_data['SKU'].isin(strategic_skus)
+                     week_data = week_data.sort_values(['is_strategic', 'Constrained_Plan'], ascending=[True, False])
+                     
+                     # Cut from lowest priority SKUs
+                     remaining_to_cut = shortage
+                     for idx, row in week_data.iterrows():
+                         if remaining_to_cut <= 0:
+                             break
+                         
+                         sku = row['SKU']
+                         current_plan = row['Constrained_Plan']
+                         cut_amount = min(current_plan, remaining_to_cut)
+                         
+                         if cut_amount > 0:
+                             # Apply the cut
+                             self.constrained_plan.at[idx, 'Constrained_Plan'] -= cut_amount
+                             self.constrained_plan.at[idx, 'Negotiation_Log'] = f"Cut {cut_amount:.0f} due to capacity limit"
+                             remaining_to_cut -= cut_amount
              
         return self.constrained_plan
 
