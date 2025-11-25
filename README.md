@@ -55,6 +55,25 @@ The project implements a **hub-and-spoke multi-agent architecture** aligned with
 
 All of these are coordinated by an **Orchestrator**, which runs the planning cycle and passes state between agents.
 
+### Agent Interaction Architecture
+
+```mermaid
+flowchart LR
+    User[User or Planner] --> Analyst[AnalystAgent]
+
+    Analyst --> Orchestrator[OrchestratorAgent]
+
+    Orchestrator --> Policy[PolicyAndGuardrailAgent]
+    Orchestrator --> Data[DataAndSignalAgent]
+    Orchestrator --> Seg[SegmentationAndPlaybookAgent]
+    Orchestrator --> Base[BaselineForecastAgent]
+    Orchestrator --> Scenario[EventAndScenarioAgent]
+    Orchestrator --> Neg[MicroNegotiationAgent]
+    Orchestrator --> Monitor[MonitorExplainLearnAgent]
+
+    Monitor --> Orchestrator
+    Neg --> Orchestrator
+
 ---
 
 ### ✅ Implemented Concepts
@@ -121,6 +140,7 @@ All of these are coordinated by an **Orchestrator**, which runs the planning cyc
 - **Memory-as-a-Tool**  
   `MonitorAgent` and the Orchestrator use `utils/memory_store.py` to persist “learnings” and run history into `memory_store.json`, giving the system basic recall across runs.
 
+
 ---
 
 **VI. Multi-Agent Patterns**
@@ -163,6 +183,24 @@ All of these are coordinated by an **Orchestrator**, which runs the planning cyc
 -   **Ground Truth Validation**  
     Tests validate agent outputs against expected results with configurable tolerances and keyword matching.
 
+```mermaid
+flowchart LR
+    TestFiles[Eval YAML tests] --> EvalRunner[eval_runner]
+
+    EvalRunner --> Orchestrator[OrchestratorAgent]
+    Orchestrator --> Agents[All Agents]
+
+    Agents --> Answers[Agent Answers and Outputs]
+
+    EvalRunner --> Judge[LLM Judge]
+    Answers --> Judge
+    TestFiles --> Judge
+
+    Judge --> Results[Pass or Fail with reasons]
+
+    Results --> ReportMD[eval_report.md]
+    Results --> ReportJSON[eval_report.json]
+    Results --> Suggestions[refinement_suggestions.md]
 ---
 
 **IX. Security & Configuration**
